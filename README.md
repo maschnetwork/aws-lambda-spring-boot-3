@@ -41,3 +41,10 @@ After successful deployment you can use the following script to test the applica
 ```
 ./test-app.sh
 ```
+
+## Result
+
+![results](img/result.png)
+
+![logs](img/logs.png)
+
