@@ -7,14 +7,21 @@ API Gateway Events and plain HTTP requests the example project uses the [AWS Lam
 ## Prerequisites
 
 - Docker
+- Maven
 - Java 17
-- AWS CDK CLI
+- [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/cli.html)
 
 ## How to build the application
 
-Run the following script to execute the maven build, create a minimal Java 17 JRE via jlink and package it with starting instructions.
+Ensure you are using Java 17 and build the application:
+
 ```
-./build.sh
+mvn clean package -f unicorn-store-spring/pom.xml
+```
+
+Run the following script to create a minimal Java 17 JRE via jlink and package it with starting instructions.
+```
+./build-lambda-custom-jre17.sh
 ```
 
 To deploy the application via CDK use:
