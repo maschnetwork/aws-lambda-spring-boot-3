@@ -1,4 +1,4 @@
-# Spring Boot on AWS Lambda example
+# Spring Boot 3 on AWS Lambda example
 
 The following repository contains an example of a Spring Boot 3 application that is running on AWS Lambda.
 Since Spring Boot 3 is based on Java 17, we have to use an [AWS Lambda custom runtime](https://aws.amazon.com/blogs/compute/build-a-custom-java-runtime-for-aws-lambda/). For translation between
