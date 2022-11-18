@@ -23,8 +23,13 @@ Run the following script to create a minimal Java 17 JRE via jlink and package i
 ```
 ./build-lambda-custom-jre17.sh
 ```
+If you haven't run AWS CDK on your AWS account before run:
 
-To deploy the application via CDK use:
+```
+cdk bootstrap
+```
+
+Deploy the application via AWS CDK use:
 
 ```
 ./deploy.sh
