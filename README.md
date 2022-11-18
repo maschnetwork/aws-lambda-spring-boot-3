@@ -11,7 +11,7 @@ API Gateway Events and plain HTTP requests the project uses the [AWS Lambda Web 
 - Java 17
 - [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/cli.html)
 
-## How to build the application
+## How to build, deploy & test the application
 
 Ensure you are using Java 17 and build the application:
 
