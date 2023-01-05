@@ -18,14 +18,19 @@ public class UnicornStoreSpringStack extends Stack {
 
         var eventBridge = createEventBus();
         var unicornStoreSpringLambda = createUnicornLambdaFunction();
+        // Create Version and Alias
+        var liveAlias = unicornStoreSpringLambda.addAlias("live");
+        // Enable SnapStart
+        CfnFunction cfnFunction = (CfnFunction) unicornStoreSpringLambda.getNode().getDefaultChild();
+        cfnFunction.addPropertyOverride("SnapStart", Map.of("ApplyOn", "PublishedVersions"));
 
-        //Permission for Spring Boot Lambda Function
+        // Permission for Spring Boot Lambda Function
         eventBridge.grantPutEventsTo(unicornStoreSpringLambda);
 
-        //Setup a Proxy-Rest API to access the Spring Lambda function
-        var restApi = setupRestApi(unicornStoreSpringLambda);
+        // Setup a Proxy-Rest API to access the Spring Lambda function
+        var restApi = setupRestApi(liveAlias);
 
-        //Create output values for later reference
+        // Create output values for later reference
         new CfnOutput(this, "unicorn-store-spring-function-arn", CfnOutputProps.builder()
                 .value(unicornStoreSpringLambda.getFunctionArn())
                 .build());
@@ -35,20 +40,21 @@ public class UnicornStoreSpringStack extends Stack {
                 .build());
     }
 
-    private RestApi setupRestApi(Function unicornStoreSpringLambda) {
+    private RestApi setupRestApi(IFunction handler) {
         return LambdaRestApi.Builder.create(this, "UnicornStoreSpringApi")
                 .restApiName("UnicornStoreSpringApi")
-                .handler(unicornStoreSpringLambda)
+                .handler(handler)
                 .build();
     }
 
-    private ILayerVersion getWebAdapterLayer(){
-        return LayerVersion.fromLayerVersionArn(this, "WebAdapterLayer", String.format("arn:aws:lambda:%s:753240598075:layer:LambdaAdapterLayerX86:7", Stack.of(this).getRegion()));
+    private ILayerVersion getWebAdapterLayer() {
+        return LayerVersion.fromLayerVersionArn(this, "WebAdapterLayer", String
+                .format("arn:aws:lambda:%s:753240598075:layer:LambdaAdapterLayerX86:10", Stack.of(this).getRegion()));
     }
 
     private Function createUnicornLambdaFunction() {
         return Function.Builder.create(this, "UnicornStoreSpringFunction")
-                .runtime(Runtime.PROVIDED_AL2)
+                .runtime(Runtime.JAVA_11)
                 .functionName("unicorn-store-spring-boot-3")
                 .memorySize(2048)
                 .handler("lambda-web-adapter-runner.sh")
@@ -56,11 +62,9 @@ public class UnicornStoreSpringStack extends Stack {
                 .timeout(Duration.seconds(29))
                 .code(Code.fromAsset("../../spring-custom-runtime.zip"))
                 .environment(Map.of(
-                        "RUST_LOG", "info",
+                        "AWS_LAMBDA_EXEC_WRAPPER", "/opt/bootstrap",
                         "READINESS_CHECK_PATH", "/actuator/health",
-                        "REMOVE_BASE_PATH", "/v1",
                         "MANAGEMENT_HEALTH_DISKSPACE_PATH", "/tmp"
-
                 ))
                 .build();
     }
