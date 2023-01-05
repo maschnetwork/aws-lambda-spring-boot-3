@@ -40,10 +40,10 @@ public class UnicornStoreSpringStack extends Stack {
                 .build());
     }
 
-    private RestApi setupRestApi(IFunction hanlder) {
+    private RestApi setupRestApi(IFunction handler) {
         return LambdaRestApi.Builder.create(this, "UnicornStoreSpringApi")
                 .restApiName("UnicornStoreSpringApi")
-                .handler(hanlder)
+                .handler(handler)
                 .build();
     }
 
