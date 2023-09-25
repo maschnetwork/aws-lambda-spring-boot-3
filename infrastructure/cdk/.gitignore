@@ -12,3 +12,5 @@ target
 cdk.out
 cdk.context.json
 
+app/*
+

@@ -1,12 +1,9 @@
 # Spring Boot 3 on AWS Lambda example
 
-The following repository contains an example of a Spring Boot 3 application that is running on AWS Lambda.
-Since Spring Boot 3 is based on Java 17, we have to use a [AWS Lambda custom runtime](https://aws.amazon.com/blogs/compute/build-a-custom-java-runtime-for-aws-lambda/). For translation between
-API Gateway Events and plain HTTP requests the project uses the [AWS Lambda Web adapter](https://github.com/awslabs/aws-lambda-web-adapter).
+The following repository contains an example of a Spring Boot 3 application that is running on AWS Lambda (Java 17). It leverages the new version of the [Serverless Java Container library](https://github.com/awslabs/aws-serverless-java-container) for compatibility between API Gateway events and Spring Boot 3. For additional information please see this [hands on workshop](https://catalog.workshops.aws/java-on-aws-lambda/en-US/01-migration/01-setup-and-deploy/java-container).   
 
 ## Prerequisites
 
-- Docker
 - Maven
 - Java 17
 - [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/cli.html)
@@ -17,12 +14,9 @@ Ensure you are using Java 17 and build the application:
 
 ```
 mvn clean package -f unicorn-store-spring/pom.xml
+cp unicorn-store-spring/target/spring-boot-lambda.jar infrastructure/cdk/app
 ```
 
-Run the following script to create a minimal Java 17 JRE via jlink and package it with starting instructions.
-```
-./build-lambda-custom-jre17.sh
-```
 If you haven't used AWS CDK on your AWS account before run:
 
 ```

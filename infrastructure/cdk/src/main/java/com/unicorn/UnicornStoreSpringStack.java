@@ -11,6 +11,8 @@ import software.constructs.Construct;
 import java.util.List;
 import java.util.Map;
 
+import static software.amazon.awscdk.services.lambda.CfnFunction.*;
+
 public class UnicornStoreSpringStack extends Stack {
 
     public UnicornStoreSpringStack(final Construct scope, final String id, final StackProps props) {
@@ -20,9 +22,6 @@ public class UnicornStoreSpringStack extends Stack {
         var unicornStoreSpringLambda = createUnicornLambdaFunction();
         // Create Version and Alias
         var liveAlias = unicornStoreSpringLambda.addAlias("live");
-        // Enable SnapStart
-        CfnFunction cfnFunction = (CfnFunction) unicornStoreSpringLambda.getNode().getDefaultChild();
-        cfnFunction.addPropertyOverride("SnapStart", Map.of("ApplyOn", "PublishedVersions"));
 
         // Permission for Spring Boot Lambda Function
         eventBridge.grantPutEventsTo(unicornStoreSpringLambda);
@@ -54,18 +53,14 @@ public class UnicornStoreSpringStack extends Stack {
 
     private Function createUnicornLambdaFunction() {
         return Function.Builder.create(this, "UnicornStoreSpringFunction")
-                .runtime(Runtime.JAVA_11)
+                .runtime(Runtime.JAVA_17)
                 .functionName("unicorn-store-spring-boot-3")
                 .memorySize(2048)
-                .handler("lambda-web-adapter-runner.sh")
+                .handler("com.unicorn.store.StreamLambdaHandler::handleRequest")
                 .layers(List.of(getWebAdapterLayer()))
                 .timeout(Duration.seconds(29))
-                .code(Code.fromAsset("../../spring-custom-runtime.zip"))
-                .environment(Map.of(
-                        "AWS_LAMBDA_EXEC_WRAPPER", "/opt/bootstrap",
-                        "READINESS_CHECK_PATH", "/actuator/health",
-                        "MANAGEMENT_HEALTH_DISKSPACE_PATH", "/tmp"
-                ))
+                .code(Code.fromAsset("app/spring-boot-lambda.jar"))
+                .snapStart(SnapStartConf.ON_PUBLISHED_VERSIONS)
                 .build();
     }
 
